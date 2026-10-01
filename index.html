@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certificate Verification</title>
+<style>
+  :root{
+    --ink:#2b3a55; --muted:#5b6b82; --orange:#fb7f05; --orange-d:#e06f00;
+    --card:#fff; --green-bg:#e8f5ec; --green:#1e8a3c; --red-bg:#fdeaea; --red:#c0392b;
+    --top:#c7cdd6; --bottom:#3c4d66;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);
+    min-height:100vh;background:linear-gradient(#c7cdd6,#8a97a8 55%,#3c4d66)}
+  header{background:#fff;padding:20px 16px 24px;border-top:2px solid #444}
+  .logo{display:block;margin:0 auto 22px;width:64px;height:auto}
+  form{color-scheme:light;display:flex;max-width:800px;margin:0 auto;border:1.5px solid #8a95a5;border-radius:999px;overflow:hidden;background:#fff}
+  form svg{flex:none;margin:0 8px 0 14px;align-self:center}
+  input{flex:1;min-width:0;border:0;outline:0;font:inherit;font-size:1.05rem;padding:12px 4px;color:var(--ink);background:#fff}
+  input::placeholder{color:#7d8794}
+  button{font:inherit;cursor:pointer;border:0;background:var(--orange);color:#fff;padding:0 28px;font-size:1.05rem}
+  button:hover{background:var(--orange-d)}
+  button:focus-visible,input:focus-visible,.copy:focus-visible{outline:3px solid #1b5fd1;outline-offset:2px}
+  main{max-width:800px;margin:0 auto;padding:24px 16px 40px}
+  h1{font-size:1.25rem;font-weight:700;margin-bottom:20px}
+  .preview{height:auto;min-height:350px;border-radius:10px;margin-bottom:24px;position:relative;
+    background:linear-gradient(135deg,#fff,#f1f3f6);box-shadow:0 8px 30px rgba(0,0,0,.12);overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+  .preview::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:8px;background:#f5b400}
+  .preview small{color:var(--muted);letter-spacing:.04em}
+  .preview b{font-size:1.6rem;margin:10px 0 6px}
+  .preview span{color:var(--muted);max-width:360px}
+  .preview img{max-width:100%; height:auto; border-radius:8px;}
+  .card{background:var(--card);border-radius:20px;padding:24px 24px;box-shadow:0 6px 24px rgba(0,0,0,.1)}
+  dl{display:grid;grid-template-columns:140px 1fr;gap:30px 12px;align-items:start}
+  dt{font-weight:700;font-size:1.05rem}
+  dd{font-size:1.1rem;line-height:1.6;word-break:break-word}
+  .badge{display:inline-block;padding:8px 20px;border-radius:6px;background:var(--green-bg);color:var(--green)}
+  hr{border:0;border-top:2px solid #eceef1;margin:30px 0 26px}
+  .issued{text-align:center}
+  .issued h2{font-size:1.3rem;margin-bottom:16px}
+  .issued img,.issued svg{width:56px}
+  .copy{display:block;width:100%;max-width:490px;margin:26px auto 0;border-radius:999px;padding:18px;font-size:1.3rem}
+  .error{background:var(--card);border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.1)}
+  .error .badge{background:var(--red-bg);color:var(--red);margin-bottom:12px}
+  .error p{line-height:1.5}
+  .hint{margin-top:14px;color:var(--muted);font-size:.95rem}
+  .hint code{background:#eef1f5;padding:2px 6px;border-radius:4px;color:var(--ink)}
+  [hidden]{display:none!important}
+  @media(max-width:420px){dl{grid-template-columns:1fr;gap:4px 0}dd{margin-bottom:18px}}
+</style>
+</head>
+<body>
+<header>
+  <img class="logo" src="WhatsApp Image 2026-10-01 at 21.49.18.jpeg" alt="Logo" aria-hidden="true">
+  <form id="form" role="search">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8a95a5" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="q" type="text" placeholder="Enter the credential ID" aria-label="Credential ID" autocomplete="off" autocapitalize="characters">
+    <button type="submit">Verify</button>
+  </form>
+</header>
+
+<main id="result" aria-live="polite">
+  <div class="error" id="empty">
+    <p>Enter a credential ID above to verify a certificate.</p>
+    <p class="hint">Try <code>9PM0ZUJJBXL26</code></p>
+  </div>
+</main>
+
+<script>
+// Add more certificates here. Key = credential ID (uppercase).
+const CERTS = {
+  "9PM0ZUJJBXL20": {
+    name: "Priyanshu Mahar",
+    doc: "ACR",
+    course: "45-Days Live Training and Project-Based Internship with Certificate",
+    id: "9PM0ZUJJBXL20",
+    issued: "2026-07-16",
+    expiry: null,
+    status: "Active",
+    image: "WhatsApp Image 2026-10-01 at 21.09.40.jpeg"
+  },
+  "YBI-DSL-1070": {
+    name: "Priyanshu Mahar",
+    doc: "Internship Certificate",
+    course: "Data Science and Machine Learning",
+    id: "YBI-DSL-1070",
+    issued: "2026-07-16",
+    expiry: null,
+    status: "Active",
+    image: "WhatsApp Image 2026-10-01 at 21.09.40.jpeg"
+  }
+};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = iso => new Date(iso + "T00:00:00").toLocaleDateString("en-US",
+  {weekday:"long", month:"short", day:"numeric", year:"numeric"}).replace(/^(\w+), (\w+ \d+), (\d+)$/, "$1, $2 $3");
+
+function render(c){
+  $("#result").innerHTML = `
+    <h1>This certificate was issued to ${esc(c.name)}</h1>
+    <div class="preview">
+      <img src="${esc(c.image)}" alt="Certificate for ${esc(c.name)}">
+    </div>
+    <div class="card">
+      <dl>
+        <dt>Learner Name :</dt><dd>${esc(c.name)}</dd>
+        <dt>Document :</dt><dd>${esc(c.doc)}</dd>
+        <dt>Course Name :</dt><dd>${esc(c.course)}</dd>
+        <dt>Credential Id :</dt><dd>${esc(c.id)}</dd>
+        <dt>Issued On :</dt><dd>${fmt(c.issued)}</dd>
+        <dt>Expiry Date :</dt><dd>${c.expiry ? fmt(c.expiry) : "Does not expire"}</dd>
+        <dt>Status :</dt><dd><span class="badge">${esc(c.status)}</span></dd>
+      </dl>
+      <hr>
+      <div class="issued">
+        <h2>This certificate has been issued by</h2>
+        <img src="WhatsApp Image 2026-10-01 at 21.49.18.jpeg" alt="Logo" aria-hidden="true" style="width:56px;height:auto;">
+        <button class="copy" id="copy" type="button">Copy link</button>
+      </div>
+    </div>`;
+  $("#copy").onclick = async e => {
+    const url = location.origin + location.pathname + "?id=" + encodeURIComponent(c.id);
+    try { await navigator.clipboard.writeText(url); } catch { prompt("Copy this link:", url); }
+    e.target.textContent = "Link copied";
+    setTimeout(() => e.target.textContent = "Copy link", 1800);
+  };
+}
+
+function notFound(id){
+  $("#result").innerHTML = `<div class="error"><span class="badge">Not found</span>
+    <p>No certificate matches “${esc(id)}”. Check the credential ID and try again.</p></div>`;
+}
+
+function verify(raw){
+  const id = raw.trim().toUpperCase();
+  if(!id) return;
+  const c = CERTS[id];
+  c ? render(c) : notFound(raw.trim());
+  history.replaceState(null, "", "?id=" + encodeURIComponent(id));
+}
+
+$("#form").addEventListener("submit", e => { e.preventDefault(); verify($("#q").value); });
+
+const initial = new URLSearchParams(location.search).get("id");
+if(initial){ $("#q").value = initial; verify(initial); }
+else { render(Object.values(CERTS)[0]); }
+</script>
+</body>
+</html>
